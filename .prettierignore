@@ -1,0 +1,66 @@
+# Prettier ignore file
+# Files and directories to ignore when running Prettier
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Generated files
+*.generated.*
+*.gen.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Lock files (these have specific formatting requirements)
+package-lock.json
+yarn.lock
+
+# Binary files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.ico
+*.pdf
+*.zip
+*.tar.gz
+
+# Large data files that shouldn't be formatted
+*.json.large
+*.csv
+*.sql
+
+# GenAIScript files
+.genaiscript/
+genaisrc/
+
+codeql-pack.yml
+codeql-pack.lock.yml
+qlpack.yml
+
+languages/*/tools/dev/

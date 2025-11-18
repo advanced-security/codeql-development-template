@@ -1,0 +1,198 @@
+name: "CodeQL Development Toolkit (QLT) - Run Unit Tests (Multi-Language)"
+
+# # `qlt` is the (Code)QL (Development) Toolkit, which wraps the `codeql` CLI.
+# # Ref: https://github.com/advanced-security/codeql-development-toolkit/blob/main/README.md
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  discover-test-languages:
+    name: Discover Languages with CodeQL Unit Tests
+    runs-on: ubuntu-latest
+    outputs:
+      languages: ${{ steps.find-languages.outputs.languages }}
+      has_languages: ${{ steps.find-languages.outputs.has_languages }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup CodeQL environment for discovering unit tests
+        uses: ./.github/actions/setup-codeql-environment
+        with:
+          install-codeql: true
+          install-language-runtimes: false
+          install-ql-packs: false
+
+      - name: Find languages with CodeQL unit tests
+        id: find-languages
+        shell: bash
+        run: |
+          # Find all languages with unit tests
+          languages_array="["
+          first=true
+
+          for lang_dir in languages/*/; do
+            if [[ -d "$lang_dir" ]]; then
+              lang=$(basename "$lang_dir")
+              # Skip directories for unsupported languages and/or languages without tests.
+              # The `ql` language (i.e. ql for ql) is always a special case.
+              # The `actions` language is currently not supported by `qlt` but is supported by `codeql`.
+              # TODO: Implement support for `actions` language in `qlt`
+              if [[ "$lang" == "ql" || "$lang" == "actions" ]]; then
+                echo "⚠️  qlt unit testing is not currently supported for language: $lang"
+                continue
+              fi
+
+              echo "Checking for unit tests in language: $lang"
+
+              # Use codeql resolve tests to check if this language has any unit tests
+              if codeql resolve tests --format=text --strict-test-discovery -- "languages/$lang" 2>/dev/null | grep -q ".qlref"; then
+                echo "✅ Found unit tests for language: $lang"
+                if [[ "$first" == "true" ]]; then
+                  languages_array="$languages_array\"$lang\""
+                  first=false
+                else
+                  languages_array="$languages_array,\"$lang\""
+                fi
+              else
+                echo "⚠️  No unit tests found for language: $lang"
+              fi
+            fi
+          done
+
+          languages_array="$languages_array]"
+
+          if [[ "$languages_array" == "[]" ]]; then
+            echo "languages=[]" >> $GITHUB_OUTPUT
+            echo "has_languages=false" >> $GITHUB_OUTPUT
+            echo "❌ No languages with unit tests found"
+          else
+            echo "languages=$languages_array" >> $GITHUB_OUTPUT
+            echo "has_languages=true" >> $GITHUB_OUTPUT
+            echo "📊 Languages with tests: $languages_array"
+          fi
+
+  run-test-suites:
+    name: Use `qlt` to run unit tests for language=${{ matrix.language }}
+    needs: [discover-test-languages]
+    permissions:
+      contents: write
+    if: ${{ needs.discover-test-languages.outputs.has_languages == 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ${{ fromJSON(needs.discover-test-languages.outputs.languages) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup CodeQL environment for executing `qlt` unit tests
+        uses: ./.github/actions/setup-codeql-environment
+
+      - name: "Run CodeQL unit tests for language=${{ matrix.language }}"
+        # Only run when the language is set to a known non-empty value
+        if: ${{ matrix.language && matrix.language != 'unknown' }}
+        id: run-test-suites
+        env:
+          RUNNER_OS: ${{ runner.os }}
+          RUNNER_TMP: ${{ runner.temp }}
+          # Additional environment variables for specific languages
+          LGTM_INDEX_XML_MODE: all
+        shell: bash
+        run: |
+          echo "Running CodeQL unit tests for language: ${{ matrix.language }}"
+
+          # Create work directory for test results
+          mkdir -p ./test-results
+
+          # Run tests for the specific language using qlt
+          set +e  # Don't exit on error so we can still upload partial results
+          qlt test run execute-unit-tests \
+            --base languages/ \
+            --runner-os ${{ runner.os }} \
+            --language ${{ matrix.language }} \
+            --work-dir ./test-results
+
+          TEST_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+
+          # Check if any results were generated
+          if [ -d "./test-results" ] && [ "$(find ./test-results -type f | wc -l)" -gt 0 ]; then
+            echo "✅ Test results generated for language: ${{ matrix.language }}"
+            echo "Generated files:"
+            find ./test-results -type f | head -10
+          else
+            echo "⚠️  No test result files found for language: ${{ matrix.language }}"
+          fi
+
+          if [ $TEST_EXIT_CODE -ne 0 ]; then
+            echo "❌ Tests failed for language: ${{ matrix.language }} with exit code: $TEST_EXIT_CODE"
+            exit $TEST_EXIT_CODE
+          fi
+
+          echo "✅ Tests completed successfully for language: ${{ matrix.language }}"
+
+      - name: Upload test results
+        # Upload results even if tests failed, but only if the language is valid
+        if: ${{ always() && matrix.language && matrix.language != 'unknown' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: qlt-test-results-${{ matrix.language }}-${{ runner.os }}
+          path: |
+            test-results/
+          if-no-files-found: warn
+
+  validate-test-results:
+    name: Validate test results
+    needs: [discover-test-languages, run-test-suites]
+    if: ${{ needs.discover-test-languages.outputs.has_languages == 'true' && !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup CodeQL environment for validating `qlt` unit tests
+        uses: ./.github/actions/setup-codeql-environment
+        with:
+          install-codeql: false
+          install-language-runtimes: false
+          install-ql-packs: false
+
+      - name: Download CodeQL unit test results
+        uses: actions/download-artifact@v5
+        with:
+          pattern: qlt-test-results-*
+          path: test-results/
+          merge-multiple: true
+
+      - name: Validate and display unit test results
+        shell: bash
+        run: |
+          echo "Running qlt test run validate-unit-tests to validate all test results..."
+          # Debug: List downloaded artifacts
+          echo "Downloaded artifacts structure:"
+          find test-results/ -type f -name "*.json" -o -name "*.xml" -o -name "*.txt" | head -20
+          # Ensure the test-results directory exists and has content
+          if [ ! -d "test-results/" ] || [ -z "$(find test-results/ -type f)" ]; then
+            echo "❌ No test results found in test-results/ directory"
+            echo "Contents of current directory:"
+            ls -la
+            echo "Contents of test-results/ (if it exists):"
+            ls -la test-results/ || echo "test-results/ directory does not exist"
+            exit 1
+          fi
+          # Use qlt to validate the test results
+          qlt test run validate-unit-tests --base languages/ --results-directory test-results/
+          echo "✅ Test validation completed"

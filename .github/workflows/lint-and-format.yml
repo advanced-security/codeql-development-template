@@ -1,0 +1,83 @@
+name: Lint and Format Markdown and YAML Files
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.md"
+      - ".prettierrc"
+      - ".prettierignore"
+      - "eslint.config.js"
+      - "package.json"
+      - ".github/workflows/lint-and-format.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.md"
+      - ".prettierrc"
+      - ".prettierignore"
+      - "eslint.config.js"
+      - "package.json"
+      - ".github/workflows/lint-and-format.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-format-markdown-and-yaml:
+    name: Lint and Format Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          cache: "npm"
+          node-version-file: "package.json"
+
+      - name: Lint and Format - Install dependencies
+        run: npm ci
+
+      - name: Lint and Format - Run YAML linting
+        run: npm run lint:yaml
+
+      - name: Lint and Format - Run Markdown linting
+        run: npm run lint:markdown
+
+      - name: Lint and Format - Check formatting
+        run: npm run format:check
+
+      - name: Lint and Format - Summary
+        if: always()
+        run: |
+          echo "## Lint and Format Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ Completed Checks:" >> $GITHUB_STEP_SUMMARY
+          echo "- YAML linting (GitHub Actions workflows)" >> $GITHUB_STEP_SUMMARY
+          echo "- Markdown linting (README files)" >> $GITHUB_STEP_SUMMARY
+          echo "- Code formatting consistency check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔧 Available Fix Commands:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# Fix linting issues automatically:" >> $GITHUB_STEP_SUMMARY
+          echo "npm run lint:fix" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Fix formatting issues automatically:" >> $GITHUB_STEP_SUMMARY
+          echo "npm run format" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Run all checks locally:" >> $GITHUB_STEP_SUMMARY
+          echo "npm run test:lint" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📋 Checked Files:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`.github/workflows/*.yml\` (GitHub Actions)" >> $GITHUB_STEP_SUMMARY
+          echo "- \`**/README.md\` (Documentation)" >> $GITHUB_STEP_SUMMARY
+          echo "- All YAML and Markdown files for formatting" >> $GITHUB_STEP_SUMMARY

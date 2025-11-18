@@ -1,0 +1,120 @@
+name: Request new CodeQL Query
+description: Request a new CodeQL query for detecting specific code patterns
+title: "[Query Create]: "
+labels: ["query-create", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for requesting a new CodeQL query! This template helps Copilot Coding Agent understand your requirements.
+
+  - type: dropdown
+    id: target-language
+    attributes:
+      label: Target Language
+      description: Which programming language should this query target?
+      options:
+        - actions
+        - cpp
+        - csharp
+        - go
+        - java
+        - javascript
+        - python
+        - ql
+        - ruby
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: query-name
+    attributes:
+      label: Query Name (Optional)
+      description: PascalCased name (e.g., DetectSqlInjection). Auto-generated if not provided.
+      placeholder: "e.g., DetectSqlInjection, FindMemoryLeaks"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: query-type
+    attributes:
+      label: Query Type
+      description: Category of this query
+      options:
+        - Security
+        - Performance
+        - Code Quality
+        - Maintainability
+        - Bug Detection
+        - Framework-specific
+        - Other
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Query Description
+      description: What should this query detect?
+      placeholder: "This query should identify..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Expected Severity
+      description: Severity level for detected issues
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+        - Informational
+      default: 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Code Examples
+      description: Provide code that should (and shouldn't) be detected
+      placeholder: |
+        ```java
+        // SHOULD be detected:
+        String sql = "SELECT * FROM users WHERE id=" + userId;
+
+        // should NOT be detected:
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE id=?");
+        ```
+    validations:
+      required: false
+
+  - type: input
+    id: cwe-reference
+    attributes:
+      label: CWE/CVE Reference (Optional)
+      description: Related Common Weakness Enumeration or CVE
+      placeholder: "e.g., CWE-89, CVE-2023-12345"
+    validations:
+      required: false
+
+  - type: input
+    id: references
+    attributes:
+      label: References (Optional)
+      description: Links to documentation, research, or related resources
+      placeholder: "https://..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

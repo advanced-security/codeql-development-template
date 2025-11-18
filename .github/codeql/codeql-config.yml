@@ -1,0 +1,9 @@
+name: "My custom CodeQL config"
+
+queries:
+  - uses: security-extended
+
+paths-ignore:
+  - "languages/*/custom/test/**"
+  - "languages/*/example/test/**"
+  - "languages/*/tools/test/**"

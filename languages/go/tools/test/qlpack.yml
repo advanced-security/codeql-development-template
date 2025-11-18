@@ -1,0 +1,9 @@
+name: languages-go-tools-test
+version: 0.0.1
+dependencies:
+  # This test pack does not actually depend upon `codeql/go-queries`,
+  # but we declare the dependency to ensure that the queries from the
+  # query pack are downloaded and available locally.
+  codeql/go-queries: "*"
+  languages-go-tools-src: "*"
+extractor: go

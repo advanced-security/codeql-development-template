@@ -1,0 +1,616 @@
+name: "Setup CodeQL Environment with Languages"
+description: "Install and configure CodeQL CLI, QLT toolkit, and language-specific tools with optimized caching"
+
+inputs:
+  # Installation control options (all default to true except where noted)
+  install-codeql:
+    description: "Whether to install CodeQL CLI (via QLT)"
+    required: false
+    default: "true"
+  install-language-runtimes:
+    description: "Whether to install language-specific runtimes and build tools"
+    required: false
+    default: "true"
+  install-ql-packs:
+    description: "Whether to install CodeQL standard library and query packs"
+    required: false
+    default: "true"
+
+  # Language selection (only used if install-language-runtimes is true)
+  languages:
+    description: "Comma-separated list of target programming languages for which dependencies should be installed"
+    required: false
+    default: "cpp,csharp,go,java,javascript,python,ruby"
+
+  # Language runtime versions (only used if install-language-runtimes is true)
+  python-version:
+    description: "Python version to install"
+    required: false
+    default: "3.11"
+  java-version:
+    description: "Java version to install"
+    required: false
+    default: "17"
+  go-version:
+    description: "Go version to install"
+    required: false
+    default: "1.21"
+  dotnet-version:
+    description: ".NET version to install"
+    required: false
+    default: "8.0"
+  ruby-version:
+    description: "Ruby version to install"
+    required: false
+    default: "3.2"
+
+outputs:
+  qlt-home:
+    description: "QLT installation directory"
+    value: ${{ steps.install-qlt.outputs.qlt-home }}
+  codeql-home:
+    description: "CodeQL installation directory"
+    value: ${{ env.QLT_CODEQL_HOME }}
+  codeql-path:
+    description: "CodeQL binary path"
+    value: ${{ env.QLT_CODEQL_PATH }}
+
+runs:
+  using: "composite"
+  steps:
+    # Cache key components based on runner OS and configuration (only if CodeQL installation is enabled)
+    - name: Create cache key components
+      id: cache-keys
+      if: inputs.install-codeql == 'true'
+      shell: bash
+      run: |
+        # Read CodeQL version from qlt.conf.json for cache key
+        if [[ ! -f "qlt.conf.json" ]]; then
+          echo "❌ Error: qlt.conf.json not found in repository root"
+          echo "This action requires a qlt.conf.json file to determine the CodeQL version to use."
+          exit 1
+        fi
+
+        CODEQL_VERSION=$(jq -r '.CodeQLCLI' qlt.conf.json)
+        STDLIB_VERSION=$(jq -r '.CodeQLStandardLibrary' qlt.conf.json)
+
+        if [[ "$CODEQL_VERSION" == "null" || -z "$CODEQL_VERSION" ]]; then
+          echo "❌ Error: CodeQLCLI version not specified in qlt.conf.json"
+          exit 1
+        fi
+
+        if [[ "$STDLIB_VERSION" == "null" || -z "$STDLIB_VERSION" ]]; then
+          echo "❌ Error: CodeQLStandardLibrary version not specified in qlt.conf.json"
+          exit 1
+        fi
+
+        echo "codeql-version=$CODEQL_VERSION" >> $GITHUB_OUTPUT
+        echo "stdlib-version=$STDLIB_VERSION" >> $GITHUB_OUTPUT
+        echo "runner-os=${{ runner.os }}" >> $GITHUB_OUTPUT
+
+        # Create composite cache key for CodeQL
+        CODEQL_CACHE_KEY="codeql-${{ runner.os }}-${CODEQL_VERSION}-${STDLIB_VERSION}"
+        echo "codeql-cache-key=$CODEQL_CACHE_KEY" >> $GITHUB_OUTPUT
+
+        echo "Cache keys prepared:"
+        echo "  CodeQL Version: $CODEQL_VERSION"
+        echo "  Stdlib Version: $STDLIB_VERSION"
+        echo "  Cache Key: $CODEQL_CACHE_KEY"
+
+    # Cache QLT and CodeQL packages (only if CodeQL installation is enabled)
+    - name: Cache QLT and CodeQL packages
+      id: cache-codeql
+      if: inputs.install-codeql == 'true'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.qlt/packages
+          ~/.codeql/packages
+        key: ${{ steps.cache-keys.outputs.codeql-cache-key }}
+        restore-keys: |
+          codeql-${{ runner.os }}-${{ steps.cache-keys.outputs.codeql-version }}-
+
+    - name: Install QLT (CodeQL Development Toolkit)
+      id: install-qlt
+      uses: advanced-security/codeql-development-toolkit/.github/actions/install-qlt@main
+      with:
+        qlt-version: "latest"
+        add-to-path: true
+
+    # Install CodeQL via QLT only if cache miss and CodeQL installation is enabled
+    - name: Install CodeQL CLI via QLT
+      id: qlt-install-codeql-cli
+      if: inputs.install-codeql == 'true' && steps.cache-codeql.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        echo "Installing CodeQL CLI (cache miss)"
+        qlt codeql run install
+
+    # Always run setup to ensure environment variables are set (only if CodeQL installation is enabled)
+    - name: Setup CodeQL environment variables
+      id: setup-codeql-env
+      if: inputs.install-codeql == 'true'
+      shell: bash
+      run: |
+        echo "🔍 Setting up CodeQL environment variables..."
+
+        # Find QLT installation
+        QLT_HOME="${HOME}/.qlt"
+        if [[ -d "$QLT_HOME/packages" ]]; then
+          # Find the CodeQL installation directory
+          CODEQL_INSTALL_DIR=$(find "$QLT_HOME/packages" -maxdepth 2 -name "codeql" -type d | grep -v "codeql-stdlib" | head -1)
+          if [[ -n "$CODEQL_INSTALL_DIR" && -f "$CODEQL_INSTALL_DIR/codeql" ]]; then
+            export QLT_CODEQL_HOME="$CODEQL_INSTALL_DIR"
+            export QLT_CODEQL_PATH="$CODEQL_INSTALL_DIR/codeql"
+
+            # Set GitHub environment variables
+            echo "QLT_CODEQL_HOME=$QLT_CODEQL_HOME" >> "$GITHUB_ENV"
+            echo "QLT_CODEQL_PATH=$QLT_CODEQL_PATH" >> "$GITHUB_ENV"
+
+            # Add to GitHub PATH
+            echo "$CODEQL_INSTALL_DIR" >> "$GITHUB_PATH"
+
+            echo "✅ Environment variables set:"
+            echo "  QLT_CODEQL_HOME=$QLT_CODEQL_HOME"
+            echo "  QLT_CODEQL_PATH=$QLT_CODEQL_PATH"
+            echo "  Added to PATH: $CODEQL_INSTALL_DIR"
+          else
+            echo "❌ CodeQL installation not found in QLT cache"
+            exit 1
+          fi
+        else
+          echo "❌ QLT cache directory not found"
+          exit 1
+        fi
+
+    # Setup shell profile for persistent PATH configuration (only if CodeQL installation is enabled)
+    - name: Setup persistent shell profile
+      if: inputs.install-codeql == 'true'
+      shell: bash
+      run: |
+        echo "🔧 Setting up persistent shell profile for QLT and CodeQL..."
+
+        # Determine shell profile file
+        if [[ "$SHELL" == *"zsh"* ]] || [[ -f "$HOME/.zshrc" ]]; then
+          PROFILE_FILE="$HOME/.zshrc"
+          echo "Using zsh profile: $PROFILE_FILE"
+        elif [[ "$SHELL" == *"bash"* ]] || [[ -f "$HOME/.bashrc" ]]; then
+          PROFILE_FILE="$HOME/.bashrc"
+          echo "Using bash profile: $PROFILE_FILE"
+        else
+          # Fallback to .bash_profile
+          PROFILE_FILE="$HOME/.bash_profile"
+          echo "Using fallback profile: $PROFILE_FILE"
+        fi
+
+        # Create profile file if it doesn't exist
+        touch "$PROFILE_FILE"
+
+        # Remove any existing QLT/CodeQL PATH entries to avoid duplicates
+        if [[ -f "$PROFILE_FILE" ]]; then
+          # Create a temporary file without the old entries
+          grep -v "# QLT/CodeQL PATH" "$PROFILE_FILE" > "${PROFILE_FILE}.tmp" || true
+          mv "${PROFILE_FILE}.tmp" "$PROFILE_FILE"
+        fi
+
+        # Add QLT to PATH
+        echo "" >> "$PROFILE_FILE"
+        echo "# QLT/CodeQL PATH - Added by codeql-development-template setup" >> "$PROFILE_FILE"
+        echo "export PATH=\"\$HOME/.qlt:\$PATH\"  # QLT/CodeQL PATH" >> "$PROFILE_FILE"
+
+        # Add CodeQL to PATH if it exists
+        if [[ -n "$QLT_CODEQL_HOME" ]]; then
+          echo "export PATH=\"$QLT_CODEQL_HOME:\$PATH\"  # QLT/CodeQL PATH" >> "$PROFILE_FILE"
+          echo "export QLT_CODEQL_HOME=\"$QLT_CODEQL_HOME\"  # QLT/CodeQL PATH" >> "$PROFILE_FILE"
+          echo "export QLT_CODEQL_PATH=\"$QLT_CODEQL_PATH\"  # QLT/CodeQL PATH" >> "$PROFILE_FILE"
+        fi
+
+        echo "✅ Added QLT and CodeQL to shell profile: $PROFILE_FILE"
+        echo "📋 Profile additions:"
+        echo "  - QLT binary: ~/.qlt"
+        if [[ -n "$QLT_CODEQL_HOME" ]]; then
+          echo "  - CodeQL binary: $QLT_CODEQL_HOME"
+          echo "  - Environment variables: QLT_CODEQL_HOME, QLT_CODEQL_PATH"
+        fi
+        echo ""
+        echo "💡 Note: New shell sessions will have qlt and codeql commands available"
+
+    # Ensure QLT is in PATH (in case it was cached)
+    - name: Ensure QLT is available
+      shell: bash
+      run: |
+        # Add QLT to PATH if it exists but not in PATH
+        if [[ -f "$HOME/.qlt/qlt" ]] && ! command -v qlt >/dev/null 2>&1; then
+          echo "$HOME/.qlt" >> "$GITHUB_PATH"
+          export PATH="$HOME/.qlt:$PATH"
+        fi
+
+        # Verify QLT is available (always required)
+        if ! command -v qlt >/dev/null 2>&1; then
+          echo "❌ QLT not found in PATH"
+          exit 1
+        fi
+
+        # Verify CodeQL only if installation was requested
+        if [[ "${{ inputs.install-codeql }}" == "true" ]]; then
+          if ! command -v codeql >/dev/null 2>&1; then
+            echo "❌ CodeQL not found in PATH (installation was requested)"
+            exit 1
+          fi
+          echo "✅ Both QLT and CodeQL are available"
+        else
+          echo "✅ QLT is available (CodeQL installation was skipped)"
+        fi
+
+    - name: Verify that the `qlt` CLI is available in system PATH
+      id: verify-qlt-in-path
+      shell: bash
+      run: |
+        if ! command -v qlt >/dev/null 2>&1; then
+          echo "Error: qlt is not available in PATH"
+          exit 1
+        fi
+        echo "✅ QLT is available: $(which qlt)"
+
+    - name: Verify that the `codeql` CLI is available in system PATH
+      id: verify-codeql-in-path
+      if: inputs.install-codeql == 'true'
+      shell: bash
+      run: |
+        if ! command -v codeql >/dev/null 2>&1; then
+          echo "Error: codeql is not available in PATH"
+          exit 1
+        fi
+        echo "✅ CodeQL is available: $(which codeql)"
+
+    # `qlt` gets and sets version info via the `qlt.conf.json` file (only if CodeQL installation is enabled)
+    - name: Get `codeql` CLI version installed and set via `qlt`
+      id: qlt-codeql-get-version
+      if: inputs.install-codeql == 'true'
+      shell: bash
+      run: qlt codeql get version
+
+    - name: Install QL Packs
+      if: inputs.install-ql-packs == 'true'
+      shell: bash
+      run: |
+        echo "Installing CodeQL standard library and query packs..."
+        qlt query run install-packs
+
+    - name: Verify CodeQL installation
+      if: inputs.install-codeql == 'true'
+      shell: bash
+      run: |
+        echo "=== CodeQL Installation Verification ==="
+        echo "QLT Version: $(qlt version)"
+        echo "CodeQL Home: $QLT_CODEQL_HOME"
+        echo "CodeQL Binary: $QLT_CODEQL_PATH"
+        echo "CodeQL Directory: $(dirname "$QLT_CODEQL_PATH")"
+        echo "CodeQL Version: $($QLT_CODEQL_PATH --version)"
+        echo "CodeQL in PATH: $(which codeql || echo 'Not found in PATH')"
+        echo "Current PATH: $PATH"
+        echo "========================================="
+
+    - name: Verify QLT-only installation
+      if: inputs.install-codeql == 'false'
+      shell: bash
+      run: |
+        echo "=== QLT-Only Installation Verification ==="
+        echo "QLT Version: $(qlt version)"
+        echo "QLT in PATH: $(which qlt || echo 'Not found in PATH')"
+        echo "CodeQL installation: Skipped (install-codeql=false)"
+        echo "Language runtimes: ${{ inputs.install-language-runtimes }}"
+        echo "QL Packs: ${{ inputs.install-ql-packs }}"
+        echo "Current PATH: $PATH"
+        echo "============================================="
+
+    - name: Verify persistent shell profile setup
+      if: inputs.install-codeql == 'true'
+      shell: bash
+      run: |
+        echo "=== Shell Profile Verification ==="
+
+        # Determine which profile file was used
+        if [[ "$SHELL" == *"zsh"* ]] || [[ -f "$HOME/.zshrc" ]]; then
+          PROFILE_FILE="$HOME/.zshrc"
+        elif [[ "$SHELL" == *"bash"* ]] || [[ -f "$HOME/.bashrc" ]]; then
+          PROFILE_FILE="$HOME/.bashrc"
+        else
+          PROFILE_FILE="$HOME/.bash_profile"
+        fi
+
+        echo "Profile file: $PROFILE_FILE"
+        if [[ -f "$PROFILE_FILE" ]]; then
+          echo "Profile file exists ✅"
+          echo ""
+          echo "QLT/CodeQL entries in profile:"
+          grep "# QLT/CodeQL PATH" "$PROFILE_FILE" || echo "No QLT/CodeQL entries found"
+          echo ""
+          echo "Simulating new shell session (source profile):"
+          # Test that sourcing the profile works
+          if bash -c "source '$PROFILE_FILE' && command -v qlt >/dev/null 2>&1"; then
+            echo "✅ qlt will be available in new shell sessions"
+          else
+            echo "⚠️  qlt may not be available in new shell sessions"
+          fi
+
+          if bash -c "source '$PROFILE_FILE' && command -v codeql >/dev/null 2>&1"; then
+            echo "✅ codeql will be available in new shell sessions"
+          else
+            echo "⚠️  codeql may not be available in new shell sessions"
+          fi
+        else
+          echo "❌ Profile file not found"
+        fi
+        echo "================================="
+
+    - name: Cache performance report
+      shell: bash
+      run: |
+        echo "=== Cache Performance Report ==="
+        if [[ "${{ inputs.install-codeql }}" == "true" ]]; then
+          echo "CodeQL Packages Cache Hit: ${{ steps.cache-codeql.outputs.cache-hit }}"
+        else
+          echo "CodeQL installation: Skipped"
+        fi
+
+        if [[ "${{ inputs.install-language-runtimes }}" == "true" ]]; then
+          echo "Language Runtimes Cache Hit: ${{ steps.cache-runtimes.outputs.cache-hit }}"
+          if [[ "${{ contains(inputs.languages, 'cpp') }}" == "true" ]]; then
+            echo "C++ Tools Cache Hit: ${{ steps.cache-cpp-tools.outputs.cache-hit }}"
+          fi
+          if [[ "${{ contains(inputs.languages, 'csharp') }}" == "true" ]]; then
+            echo ".NET Packages Cache Hit: ${{ steps.cache-dotnet-packages.outputs.cache-hit }}"
+          fi
+        else
+          echo "Language runtimes installation: Skipped"
+        fi
+
+        echo "QL Packs installation: ${{ inputs.install-ql-packs }}"
+        echo "================================="
+
+    # Check for dependency files to enable smart caching (only if language runtimes installation is enabled)
+    - name: Check for dependency files
+      id: check-deps
+      if: inputs.install-language-runtimes == 'true'
+      shell: bash
+      run: |
+        echo "Checking for language dependency files..."
+
+        # Check for Python dependency files
+        if [[ -f "requirements.txt" ]] || [[ -f "pyproject.toml" ]] || [[ -f "setup.py" ]] || [[ -f "Pipfile" ]]; then
+          echo "python-deps=true" >> $GITHUB_OUTPUT
+          echo "Found Python dependency files"
+        else
+          echo "python-deps=false" >> $GITHUB_OUTPUT
+          echo "No Python dependency files found"
+        fi
+
+        # Check for Go dependency files
+        if [[ -f "go.mod" ]]; then
+          echo "go-deps=true" >> $GITHUB_OUTPUT
+          echo "Found Go dependency files"
+        else
+          echo "go-deps=false" >> $GITHUB_OUTPUT
+          echo "No Go dependency files found"
+        fi
+
+        # Check for Ruby dependency files
+        if [[ -f "Gemfile" ]]; then
+          echo "ruby-deps=true" >> $GITHUB_OUTPUT
+          echo "Found Ruby dependency files"
+        else
+          echo "ruby-deps=false" >> $GITHUB_OUTPUT
+          echo "No Ruby dependency files found"
+        fi
+
+        # Check for Java dependency files
+        if [[ -f "pom.xml" ]] || [[ -f "build.gradle" ]] || [[ -f "build.gradle.kts" ]]; then
+          echo "java-deps=true" >> $GITHUB_OUTPUT
+          echo "Found Java dependency files"
+        else
+          echo "java-deps=false" >> $GITHUB_OUTPUT
+          echo "No Java dependency files found"
+        fi
+
+        # Check for .NET dependency files
+        if [[ -f "*.csproj" ]] || [[ -f "*.sln" ]] || [[ -f "packages.config" ]]; then
+          echo "dotnet-deps=true" >> $GITHUB_OUTPUT
+          echo "Found .NET dependency files"
+        else
+          echo "dotnet-deps=false" >> $GITHUB_OUTPUT
+          echo "No .NET dependency files found"
+        fi
+
+    # Language-specific setup steps with enhanced caching (only if language runtimes installation is enabled)
+    - name: Setup Node.js
+      if: inputs.install-language-runtimes == 'true'
+      uses: actions/setup-node@v6
+      with:
+        cache: "npm"
+        cache-dependency-path: "package-lock.json"
+        node-version-file: "package.json"
+
+    # Cache language runtimes to avoid repeated downloads (excluding .NET which is cached separately)
+    - name: Cache language runtimes
+      id: cache-runtimes
+      if: inputs.install-language-runtimes == 'true'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/go/pkg/mod
+          ~/.cache/go-build
+          ~/.gem
+          ~/.bundle
+          ~/.ccache
+        key: language-runtimes-${{ runner.os }}-py${{ inputs.python-version }}-java${{ inputs.java-version }}-go${{ inputs.go-version }}-dotnet${{ inputs.dotnet-version }}-ruby${{ inputs.ruby-version }}
+        restore-keys: |
+          language-runtimes-${{ runner.os }}-
+
+    - name: Setup Python (with cache)
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'python') && steps.check-deps.outputs.python-deps == 'true'
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: "pip"
+
+    - name: Setup Python (without cache)
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'python') && steps.check-deps.outputs.python-deps == 'false'
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Setup Java (with cache)
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'java') && steps.check-deps.outputs.java-deps == 'true'
+      uses: actions/setup-java@v4
+      with:
+        distribution: "temurin"
+        java-version: ${{ inputs.java-version }}
+        cache: "maven"
+
+    - name: Setup Java (without cache)
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'java') && steps.check-deps.outputs.java-deps == 'false'
+      uses: actions/setup-java@v4
+      with:
+        distribution: "temurin"
+        java-version: ${{ inputs.java-version }}
+
+    - name: Setup Go (with cache)
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'go') && steps.check-deps.outputs.go-deps == 'true'
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ inputs.go-version }}
+        cache: true
+
+    - name: Setup Go (without cache)
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'go') && steps.check-deps.outputs.go-deps == 'false'
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ inputs.go-version }}
+        cache: false
+
+    # Cache .NET packages and tools
+    - name: Cache .NET packages
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'csharp')
+      id: cache-dotnet-packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.nuget/packages
+          ~/.dotnet/tools
+        key: dotnet-packages-${{ runner.os }}-${{ inputs.dotnet-version }}-${{ hashFiles('**/*.csproj', '**/*.sln', '**/packages.config') }}
+        restore-keys: |
+          dotnet-packages-${{ runner.os }}-${{ inputs.dotnet-version }}-
+          dotnet-packages-${{ runner.os }}-
+
+    - name: Setup .NET (for C#)
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'csharp')
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Setup Ruby (with cache)
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'ruby') && steps.check-deps.outputs.ruby-deps == 'true'
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ inputs.ruby-version }}
+        bundler-cache: true
+
+    - name: Setup Ruby (without cache)
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'ruby') && steps.check-deps.outputs.ruby-deps == 'false'
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ inputs.ruby-version }}
+        bundler-cache: false
+
+    # Cache C++ build tools and dependencies
+    - name: Cache C++ build tools
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'cpp')
+      id: cache-cpp-tools
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.ccache
+        key: cpp-tools-${{ runner.os }}-${{ hashFiles('**/CMakeLists.txt', '**/Makefile', '**/*.cmake') }}
+        restore-keys: |
+          cpp-tools-${{ runner.os }}-
+
+    - name: Setup C++ build tools
+      if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'cpp')
+      shell: bash
+      run: |
+        # Install C++ build tools on Linux/Ubuntu
+        if ! command -v gcc >/dev/null 2>&1 || ! command -v clang >/dev/null 2>&1 || ! command -v ccache >/dev/null 2>&1; then
+          echo "Installing C++ build tools..."
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang ccache
+        else
+          echo "C++ build tools already available"
+        fi
+
+        # Configure ccache after ensuring it's installed
+        if command -v ccache >/dev/null 2>&1; then
+          echo "Configuring ccache..."
+          ccache --set-config=max_size=2G
+          ccache --set-config=compression=true
+          ccache --show-stats
+          echo "✅ ccache configured with 2GB max size and compression enabled"
+        else
+          echo "❌ ccache not available after installation"
+          exit 1
+        fi
+
+    - name: Verify language-specific tools
+      if: inputs.install-language-runtimes == 'true' && inputs.languages != ''
+      shell: bash
+      run: |
+        echo "=== Language-specific tool verification ==="
+
+        if [[ "${{ inputs.languages }}" == *"javascript"* ]] || [[ "${{ inputs.languages }}" == *"typescript"* ]]; then
+          echo "Node.js version: $(node --version)"
+          echo "npm version: $(npm --version)"
+        fi
+
+        if [[ "${{ inputs.languages }}" == *"python"* ]]; then
+          echo "Python version: $(python --version)"
+          echo "pip version: $(pip --version)"
+        fi
+
+        if [[ "${{ inputs.languages }}" == *"java"* ]]; then
+          echo "Java version: $(java -version 2>&1 | head -1)"
+        fi
+
+        if [[ "${{ inputs.languages }}" == *"go"* ]]; then
+          echo "Go version: $(go version)"
+        fi
+
+        if [[ "${{ inputs.languages }}" == *"csharp"* ]]; then
+          echo "dotnet version: $(dotnet --version)"
+        fi
+
+        if [[ "${{ inputs.languages }}" == *"ruby"* ]]; then
+          echo "Ruby version: $(ruby --version)"
+        fi
+
+        if [[ "${{ inputs.languages }}" == *"cpp"* ]]; then
+          echo "GCC version: $(gcc --version | head -1 || echo 'GCC not available')"
+          echo "Clang version: $(clang --version | head -1 || echo 'Clang not available')"
+        fi
+
+        echo "================================="
+
+    # Clean up any temporary files that might interfere with post-job cleanup
+    - name: Clean up temporary files
+      shell: bash
+      run: |
+        echo "Cleaning up temporary files to prevent post-job cleanup issues..."
+
+        # Remove any temporary package manager lock files
+        sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock 2>/dev/null || true
+
+        # Clean up any stale ccache files
+        if command -v ccache >/dev/null 2>&1; then
+          ccache --cleanup 2>/dev/null || true
+        fi
+
+        echo "✅ Cleanup completed"

@@ -1,0 +1,5 @@
+name: languages-go-custom-test
+version: 0.0.1
+dependencies:
+  languages-go-custom-src: "*"
+extractor: go

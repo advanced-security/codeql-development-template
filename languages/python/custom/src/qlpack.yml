@@ -1,0 +1,5 @@
+name: languages-python-custom-src
+version: 0.0.1
+library: false
+dependencies:
+  codeql/python-all: "*"

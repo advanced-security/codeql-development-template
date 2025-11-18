@@ -1,0 +1,5 @@
+name: languages-actions-custom-test
+version: 0.0.1
+dependencies:
+  languages-actions-custom-src: "*"
+extractor: actions

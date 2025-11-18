@@ -1,0 +1,12 @@
+*.swp
+.DS_Store
+
+node_modules
+
+# Generated via `codeql-mcp-server-ci` actions workflow
+models-output.json
+
+# Test databases created via `codeql test run`
+*.testproj
+trap
+

@@ -1,0 +1,5 @@
+name: languages-ruby-custom-test
+version: 0.0.1
+dependencies:
+  languages-ruby-custom-src: '*'
+extractor: ruby

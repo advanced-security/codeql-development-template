@@ -1,0 +1,5 @@
+name: languages-cpp-custom-test
+version: 0.0.1
+dependencies:
+  languages-cpp-custom-src: '*'
+extractor: cpp

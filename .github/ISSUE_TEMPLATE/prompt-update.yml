@@ -1,0 +1,89 @@
+name: Update Instructions & Prompts
+description: Improve instructions, prompts, or templates for Copilot
+title: "[Prompt Update]: "
+labels: ["prompt-update", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for improving the prompt system! This helps make Copilot Coding Agent more effective.
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Update Scope
+      description: What area needs improvement?
+      options:
+        - Issue Templates
+        - PR Templates
+        - Copilot Instructions
+        - Workflow Prompts
+        - CLI Tool Prompts
+        - Language-Specific Prompts
+        - Documentation (README/PROMPTS)
+        - Multiple areas
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-issue
+    attributes:
+      label: Current Issue
+      description: What problem exists with current prompts/instructions?
+      placeholder: "Currently, Copilot..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-improvement
+    attributes:
+      label: Proposed Improvement
+      description: How should the prompts be improved?
+      placeholder: "The prompts should instead..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: example-behavior
+    attributes:
+      label: Example Impact
+      description: Show how this would improve Copilot's behavior
+      placeholder: |
+        Before: Copilot generates...
+        After: Copilot should generate...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: hierarchy-level
+    attributes:
+      label: Prompt Hierarchy Level
+      description: Which level is affected? (See PROMPTS.md)
+      options:
+        - Level 1 (Issue Templates)
+        - Level 2 (Instructions)
+        - Level 3 (Workflow Prompts)
+        - Level 4 (CLI/Language Prompts)
+        - Multiple levels
+        - Not sure
+      default: 5
+    validations:
+      required: false
+
+  - type: input
+    id: references
+    attributes:
+      label: References (Optional)
+      description: Links to related issues or discussions
+      placeholder: "https://..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

@@ -1,0 +1,5 @@
+name: languages-csharp-custom-test
+version: 0.0.1
+dependencies:
+  languages-csharp-custom-src: '*'
+extractor: csharp

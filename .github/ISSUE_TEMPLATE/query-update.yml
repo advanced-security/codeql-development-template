@@ -1,0 +1,96 @@
+name: Update existing CodeQL Query
+description: Request improvements or fixes to an existing CodeQL query
+title: "[Query Update]: "
+labels: ["query-update", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for requesting a query update! This template helps Copilot Coding Agent understand what needs to change.
+
+  - type: input
+    id: query-file
+    attributes:
+      label: Query File Path
+      description: Path to the query file to update
+      placeholder: "e.g., languages/java/custom/src/SqlInjection/SqlInjection.ql"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: update-type
+    attributes:
+      label: Update Type
+      description: What kind of update is needed?
+      options:
+        - Bug fix (false positives/negatives)
+        - Performance improvement
+        - Enhanced detection coverage
+        - Framework/library support
+        - Documentation update
+        - Refactoring/cleanup
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Issue Description
+      description: What problem needs to be fixed?
+      placeholder: "The query currently..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: How should this be fixed?
+      placeholder: "The query should instead..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Code Examples
+      description: Examples demonstrating the issue and expected behavior
+      placeholder: |
+        ```java
+        // Currently flagged (but shouldn't be):
+
+        // Not flagged (but should be):
+        ```
+    validations:
+      required: false
+
+  - type: dropdown
+    id: breaking-change
+    attributes:
+      label: Breaking Change?
+      description: Will this significantly change query results?
+      options:
+        - "No - backward compatible"
+        - "Yes - breaking change"
+        - "Unsure"
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: references
+    attributes:
+      label: References (Optional)
+      description: Links to related issues, bug reports, or documentation
+      placeholder: "https://..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

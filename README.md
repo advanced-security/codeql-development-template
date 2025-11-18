@@ -1,10 +1,10 @@
-# CodeQL Development Template
+# codeql-development-template
 
 > **Lowering the barrier to entry for CodeQL development through natural language and GitHub Copilot**
 
 A GitHub repository template for building custom CodeQL queries with AI assistance. This template provides a structured environment with prompts, instructions, and workflows designed to guide GitHub Copilot Coding Agent through the complete CodeQL development lifecycle.
 
-## 🎯 Purpose
+## Background
 
 This repository template enables developers to create custom CodeQL security queries with minimal CodeQL expertise by leveraging:
 
@@ -13,7 +13,7 @@ This repository template enables developers to create custom CodeQL security que
 - **Test-driven development methodology** for reliable query creation
 - **Pre-configured workflows** for setup, testing, and validation
 
-## ✅ Requirements
+## Requirements
 
 Before using this repository template, ensure your GitHub organization/account has:
 
@@ -21,7 +21,7 @@ Before using this repository template, ensure your GitHub organization/account h
 - **GitHub Copilot Coding Agent** access for AI-assisted development
 - **GitHub Advanced Security** (optional, but recommended)
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Step 1: Create a New Repository from Template
 
@@ -74,7 +74,7 @@ Before using this repository template, ensure your GitHub organization/account h
 | [Update existing CodeQL Query](.github/ISSUE_TEMPLATE/query-update.yml)  | Modify an existing query to improve accuracy or add new detection capabilities |
 | [Improve Prompts/Instructions](.github/ISSUE_TEMPLATE/prompt-update.yml) | Contribute improvements to the AI guidance system                              |
 
-## 🏗️ Repository Structure
+## Repository Structure
 
 After creating your first query, your repository will contain:
 
@@ -101,7 +101,7 @@ codeql-development-template/
 └── scripts/                   # Setup and automation scripts
 ```
 
-## 🎓 How It Works
+## How It Works
 
 This template implements a **hierarchical prompt system** that maximizes GitHub Copilot's effectiveness:
 
@@ -121,7 +121,7 @@ The Copilot Coding Agent uses this hierarchy to:
 
 See [PROMPTS.md](PROMPTS.md) for details on the prompt hierarchy system.
 
-## 🔧 Supported Languages
+## Supported Languages
 
 The template supports CodeQL query development for:
 
@@ -136,6 +136,14 @@ The template supports CodeQL query development for:
 | Python                | `python`       |
 | Ruby                  | `ruby`         |
 
-## 📄 License
+## License
 
 This repository template is available under the [MIT License](LICENSE).
+
+## Maintainers
+
+This repository template is maintained by the [CODEOWNERS](CODEOWNERS).
+
+## Support
+
+This repository template comes with no expectation or guarantee of support, with more details in the [SUPPORT.md](SUPPORT.md) document.

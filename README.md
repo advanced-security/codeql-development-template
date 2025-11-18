@@ -32,7 +32,6 @@ Before using this repository template, ensure your GitHub organization/account h
 5. Set the repository visibility (internal, private, or public)
 6. Click **"Create repository"**
 
-
 **Note:** The ['copilot-setup-steps' actions workflow](./.github/workflows/copilot-setup-steps.yml) will automatically set up the environment for Copilot Coding Agent (CCA), so local installation is optional and primarily useful for manual development.
 
 ### Step 2: Create an Issue for the CodeQL query you want to develop
@@ -126,18 +125,17 @@ See [PROMPTS.md](PROMPTS.md) for details on the prompt hierarchy system.
 
 The template supports CodeQL query development for:
 
-| Language                          | CodeQL Library |
-| --------------------------------- | -------------- |
-| GitHub Actions                    | `actions`      |
-| C/C++                             | `cpp`          |
-| C#                                | `csharp`       |
-| Go                                | `go`           |
-| Java                              | `java`         |
-| JavaScript/TypeScript             | `javascript`   |
-| Python                            | `python`       |
-| Ruby                              | `ruby`         |
+| Language              | CodeQL Library |
+| --------------------- | -------------- |
+| GitHub Actions        | `actions`      |
+| C/C++                 | `cpp`          |
+| C#                    | `csharp`       |
+| Go                    | `go`           |
+| Java                  | `java`         |
+| JavaScript/TypeScript | `javascript`   |
+| Python                | `python`       |
+| Ruby                  | `ruby`         |
 
 ## 📄 License
 
 This repository template is available under the [MIT License](LICENSE).
-

@@ -24,7 +24,7 @@ jobs:
       has_languages: ${{ steps.find-languages.outputs.has_languages }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup CodeQL environment for discovering unit tests
         uses: ./.github/actions/setup-codeql-environment
@@ -96,7 +96,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup CodeQL environment for executing `qlt` unit tests
         uses: ./.github/actions/setup-codeql-environment
@@ -161,7 +161,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup CodeQL environment for validating `qlt` unit tests
         uses: ./.github/actions/setup-codeql-environment

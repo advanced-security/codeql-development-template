@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Copilot Setup - Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Copilot Setup - Setup CodeQL environment
         uses: ./.github/actions/setup-codeql-environment

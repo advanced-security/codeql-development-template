@@ -52,7 +52,7 @@ CodeQL can detect data flows through the code but once it reaches a process boun
 Consider utilizing the https://github.com/advanced-security/monorepo-code-scanning-action that builds scan filters based on the monorepo structure as defined in a `projects.json` to describe the monorepo project structure.  Further this will optimize scanning by detectiong which projects have changed on a PR and only scanning those projects.  Each project will be analyzed in parallel and the results will be combined into a single report.  This will further reduce the time taken to scan the monorepo.
 
 
-To find this scenario - review the extractor logs and identify common project structures that might indicate indivdidual applications that would not have any cross method calls OR data flows. Commonly applications will be organized by various techniques - if any of these appear like good candidates for separation, please call them out:
+To find this scenario - review the extractor logs and identify common project structures that might indicate individual applications that would not have any cross method calls OR data flows. Commonly applications will be organized by various techniques - if any of these appear like good candidates for separation, please call them out:
 - monorepo structure (ex: `apps/` or `services/`)
 - front end web/api / middle tier api / back end data access
 - common project structures (ex: `src/` or `lib/` or `framework/` or `common/`)

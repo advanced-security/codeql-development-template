@@ -27,7 +27,7 @@ To analyze this aspect, look for the following key aspects in the log output:
 - In general, the number of files in the database vs the number of files in the baseline should not match (`CodeQL scanned <# in DB> out of <# in baseline > <language> files ... in this invocation`) - this indicates no exclusions were made.
 - Extractor output `Done extracting /home/runner/work/<repo>/<repo>/src/public/static/3rd-party-static/<CommonPackageName.2.1.0>.js (11164 ms)`
   - Identifying common 3rd party libraries by name and version can be a good indicator of files that should be excluded from the scan. For example `jquery.3.5.1.js` or `react.16.8.6.js`.  These are commonly in a parent folder that indicates all files contained are vendored and should be completely excluded from the scan using a `paths-ignore` array entry in the `codeql.yml` file.  For example, `paths-ignore: [ '**/public/static/3rd-party-static/**' ]`.
-  - Call out any timings > 1000ms for extraction `(11164 ms)` - often times this indicates a large bundled JS file (and other files int he same folder are often Generated or vendored).
+  - Call out any timings > 1000ms for extraction `(11164 ms)` - often times this indicates a large bundled JS file (and other files in the same folder are often Generated or vendored).
 
 
 See also: https://docs.github.com/en/code-security/code-scanning/troubleshooting-code-scanning/analysis-takes-too-long#reduce-the-amount-of-code-being-analyzed-in-a-single-workflow

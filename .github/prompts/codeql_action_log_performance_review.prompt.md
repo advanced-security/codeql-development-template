@@ -8,7 +8,7 @@ It is critical that you understand key aspects of CodeQL log output that can fla
 
 In general, look for the following key aspects in the log output:
 
-- The time taken to extract the code from into the CodeQL database insert format (`Extracting ..` and `Done extracting ..` will be logged for each file)
+- The time taken to extract the code into the CodeQL database insert format (`Extracting ..` and `Done extracting ..` will be logged for each file)
 - The time taken to create/optimize the database indicates size/complexity (`TRAP import`)
 - The time taken to analyze the code (each query: `[##/## eval ###ms] Evaluation done; writing results to... `)
 - The number of files in the database vs the number of files in the baseline (`CodeQL scanned <# in DB> out of <# in baseline > <language> files ... in this invocation`)

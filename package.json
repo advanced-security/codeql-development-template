@@ -18,7 +18,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.0",
     "eslint-plugin-yml": "^3.0.0",
     "eslint-plugin-markdown": "^5.1.0",
     "prettier": "^3.8.1",

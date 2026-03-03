@@ -16,11 +16,11 @@
     "type": "git",
     "url": "https://github.com/advanced-security/codeql-development-template.git"
   },
-  "dependencies": {},
   "devDependencies": {
-    "eslint": "^9.39.2",
-    "eslint-plugin-yml": "^3.0.0",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.2",
     "eslint-plugin-markdown": "^5.1.0",
+    "eslint-plugin-yml": "^3.3.0",
     "prettier": "^3.8.1",
     "yaml-eslint-parser": "^2.0.0"
   },

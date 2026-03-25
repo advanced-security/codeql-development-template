@@ -21,7 +21,7 @@ For additional guidance on repository development workflows, refer to the langua
 
 ALWAYS do the following when creating or editing any `languages/<language>/tools/dev/*.prompt.md` file:
 
-- ALWAYS add YAML frontmatter with `mode: agent` at the top of the file, with `---` lines before and after the frontmatter
+- ALWAYS add YAML frontmatter with a `description` field at the top of the file, with `---` lines before and after the frontmatter
 - ALWAYS use valid markdown syntax, with the exception of the YAML frontmatter at the top of the `.prompt.md` file
 - ALWAYS demonstrate CodeQL syntax usage with code blocks that start with three backticks followed by `ql` (i.e. "```ql")
 - ALWAYS leave an empty line before and after each code block, as well as at the end of the file

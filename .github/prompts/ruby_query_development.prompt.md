@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Guidance for developing CodeQL queries targeting Ruby code
 ---
 
 # Ruby Query Development

@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  CodeQL AST node reference for the Java language
 ---
 
 # CodeQL AST nodes for `java` language

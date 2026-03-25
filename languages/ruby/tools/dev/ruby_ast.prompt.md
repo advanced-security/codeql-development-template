@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  CodeQL AST node reference for the Ruby language
 ---
 
 # CodeQL AST nodes for `ruby` language

@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql test run command
 ---
 
 # Command Resource for `codeql test run`

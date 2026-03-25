@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  CodeQL AST node reference for the Python language
 ---
 
 # CodeQL AST nodes for `python` language

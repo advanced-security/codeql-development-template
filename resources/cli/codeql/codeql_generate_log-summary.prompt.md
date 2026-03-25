@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Reference for the codeql generate log-summary command
 ---
 
 # Command Resource for `codeql generate log-summary`

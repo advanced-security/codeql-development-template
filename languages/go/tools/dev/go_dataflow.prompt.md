@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Guide to data flow and taint tracking analysis for Go in CodeQL
 ---
 
 # Analyzing Data Flow in Go

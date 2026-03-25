@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql bqrs decode command
 ---
 
 # Command Resource for `codeql bqrs decode`

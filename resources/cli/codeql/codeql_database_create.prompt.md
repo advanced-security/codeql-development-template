@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql database create command
 ---
 
 # Command Resource for `codeql database create`

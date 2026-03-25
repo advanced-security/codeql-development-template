@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql query format command
 ---
 
 # Command Resource for `codeql query format`

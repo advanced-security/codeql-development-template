@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Guide to customizing library models for Go using data extensions and model packs
 ---
 
 # Customizing Library Models for Go

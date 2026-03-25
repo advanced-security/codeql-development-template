@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  CodeQL AST class reference for Go programs
 ---
 
 # CodeQL AST Classes for Go Programs

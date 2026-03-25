@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the qlt query run install-packs command
 ---
 
 # QLT Query Run Install-Packs Command

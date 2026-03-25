@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Review CodeQL log output for performance issues and optimization opportunities
 ---
 
 You are reviewing CodeQL log output for performance issues.

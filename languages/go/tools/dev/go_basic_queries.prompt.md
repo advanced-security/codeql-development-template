@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Basic CodeQL query examples and patterns for Go programs
 ---
 
 # Basic CodeQL Query Examples for Go

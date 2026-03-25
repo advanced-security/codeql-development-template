@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  CodeQL AST node reference for the C++ language
 ---
 
 # CodeQL AST nodes for `cpp` language

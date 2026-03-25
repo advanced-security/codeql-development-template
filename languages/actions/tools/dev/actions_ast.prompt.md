@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  CodeQL AST node reference for GitHub Actions
 ---
 
 ## CodeQL's core AST classes for `actions` language

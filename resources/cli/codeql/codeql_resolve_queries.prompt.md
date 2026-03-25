@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql resolve queries command
 ---
 
 # Command Resource for `codeql resolve queries`

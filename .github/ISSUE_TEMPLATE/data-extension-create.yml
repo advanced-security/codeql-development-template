@@ -1,0 +1,143 @@
+name: Request new CodeQL Data Exension
+description: Request a new CodeQL query for detecting specific code patterns
+title: "[Data Extension Create]: "
+labels: ["data-extension-create", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for requesting a new CodeQL data extension! This template helps Copilot Coding Agent understand your requirements.
+
+  - type: dropdown
+    id: target-language
+    attributes:
+      label: Target Language
+      description: Which programming language should this query target?
+      options:
+        - actions
+        - cpp
+        - csharp
+        - go
+        - java
+        - javascript
+        - python
+        - ruby
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: library-url
+    attributes:
+      label: Library Repository / Documentation URL
+      description: "Link to the library's source code or API documentation. A GitHub repository URL is ideal — it allows the agent to browse the source code directly to identify sources, sinks, and summaries."
+      placeholder: "e.g., https://github.com/databricks/databricks-sql-python"
+    validations:
+      required: true
+
+  - type: input
+    id: extension-name
+    attributes:
+      label: Data Extension Name (Optional)
+      description: "Extension name (e.g., databricks-sql.model.yml). Use <library>-<module>.model.yml naming. If the library has multiple modules/sub-packages (e.g., library-core, library-web, library-api), create separate model files per module."
+      placeholder: "e.g., databricks-sql.model.yml, django-http.model.yml"
+    validations:
+      required: false
+
+  - type: textarea
+    id: library-modules
+    attributes:
+      label: Library Modules / Components
+      description: "If the library has distinct modules or sub-packages, list them here. Each module may become a separate model file (e.g., library-core.model.yml, library-web.model.yml). Include the import paths or package names."
+      placeholder: |
+        - databricks.sql (SQL connector: connect, cursor, execute)
+        - databricks.sdk (SDK client: WorkspaceClient, jobs, clusters)
+        - databricks.connect (Spark session bridge)
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Data Extension Description
+      description: "Describe the library/framework to model. What methods are sources of untrusted data? What methods are security-sensitive sinks? What methods sanitize data (barriers) or validate data (barrier guards)? All applicable model types (sourceModel, sinkModel, summaryModel, barrierModel, barrierGuardModel, typeModel, neutralModel) will be generated automatically."
+      placeholder: |
+        Library: databricks-sql-connector
+        - Sources: None (uses Flask request sources)
+        - Sinks: cursor.execute(query) is a SQL injection sink
+        - Summaries: connect() returns a connection, connection.cursor() returns a cursor
+        - Barriers: db_escape(value) sanitizes output for SQL injection
+        - Barrier Guards: is_safe_query(query) returns true when query is safe for SQL injection
+
+        Docs: https://docs.databricks.com/...
+    validations:
+      required: true
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Code Examples
+      description: Provide sample end to code that should be detected
+      placeholder: |
+        ```java
+        package org.example;
+
+        # Undertow is not supported out of the box
+        import io.undertow.Undertow;
+        import io.undertow.server.HttpHandler;
+        import io.undertow.server.HttpServerExchange;
+        import io.undertow.util.Headers;
+        import java.util.Deque;
+        import javax.crypto.Cipher;
+
+        public class App {
+            public String getGreeting() {
+                return "Hello World!";
+            }
+
+            public static void main(String[] args) {
+                System.out.println(new App().getGreeting());
+                try {
+                    Runtime.getRuntime().exec("ls");
+                    Cipher rsanopad = Cipher.getInstance("RSA/ECB/NoPadding");
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+
+                Undertow server = Undertow.builder()
+                        .addHttpListener(8080, "localhost")
+                        .setHandler(new HttpHandler() {
+                            @Override
+                            public void handleRequest(final HttpServerExchange exchange) throws Exception {
+                                String name = "world";
+                                Deque<String> res = exchange.getQueryParameters().get("namex"); // SOURCE
+                                if (res != null) {
+                                    name = res.getFirst();
+                                }
+                                exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
+                                exchange.getResponseSender().send("<html><body>Hello " + name + "</body<</html>"); // SINK XSS
+                            }
+                        }).build();
+                server.start();
+            }
+        }
+        ```
+    validations:
+      required: false
+
+  - type: input
+    id: references
+    attributes:
+      label: Additional References (Optional)
+      description: "Any other links — API docs, CWE references, related CodeQL queries, or security advisories."
+      placeholder: "e.g., https://docs.databricks.com/sql/connector.html"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

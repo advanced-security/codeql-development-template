@@ -1,4 +1,3 @@
-````prompt
 ---
 mode: agent
 ---
@@ -47,6 +46,7 @@ Template variables are passed through the query-server2 JSON protocol, not via C
 ```
 
 Example contextual query pattern:
+
 ```ql
 /**
  * @name Find References
@@ -95,18 +95,21 @@ codeql execute query-server2 --save-cache --max-disk-cache=4096
 ## Advanced configuration options
 
 ### Memory and threading
+
 - `--threads=<num>`: Number of evaluation threads (0 = one per core)
 - `--timeout=<seconds>`: Query evaluation timeout
 - `--heap-ram=<MB>`: Java heap memory allocation
 - `--off-heap-ram=<MB>`: Additional off-heap memory
 
 ### Caching and performance
+
 - `--save-cache`: Aggressively cache intermediate results
 - `--max-disk-cache=<MB>`: Maximum disk cache size
 - `--keep-full-cache`: Don't clean up cache after evaluation
 - `--tuple-counting`: Display tuple counts for performance analysis
 
 ### Debug and logging
+
 - `--debug`: Include additional debugging information
 - `--evaluator-log=<file>`: Output structured performance logs
 - `--evaluator-log-minify`: Minimize JSON log size
@@ -124,12 +127,14 @@ The query-server2 uses a JSON-based protocol over stdin/stdout for communication
 ## When to use query-server2 vs query run
 
 **Use `codeql execute query-server2` when:**
+
 - Building IDE integrations or tools that execute many queries
 - Need efficient handling of contextual queries with templates
 - Require quick evaluation of query fragments via JSON protocol
 - Want to minimize query execution latency in IDE environments
 
 **Use `codeql query run` when:**
+
 - Running single queries from command line
 - Following TDD methodology for query development
 - Scripting or automation scenarios
@@ -157,4 +162,3 @@ Run `codeql execute query-server2 --help --verbose` for much more information.
 
 - [`codeql query run`](./codeql_query_run.prompt.md) - Execute single CodeQL queries (alternative for simple use cases)
 - [`codeql query compile`](./codeql_query_compile.prompt.md) - Compile queries before execution
-````

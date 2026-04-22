@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql generate query-help command
 ---
 
 # Command Resource for `codeql generate query-help`

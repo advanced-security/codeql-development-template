@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Suggested git hooks for commit and push guidelines in this repository
 ---
 
 # Suggested git hooks for this repository

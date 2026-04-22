@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Guide for developing security-focused CodeQL queries for Go
 ---
 
 # Go Security Query Development Guide

@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  CodeQL AST node reference for JavaScript and TypeScript
 ---
 
 # CodeQL AST nodes for `javascript` language

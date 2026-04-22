@@ -22,7 +22,7 @@ For additional guidance on repository development workflows, refer to:
 
 ALWAYS do the following when creating or editing any `resources/cli/**/*.prompt.md` file
 
-- ALWAYS add YAML frontmatter with `mode: agent` at the top of the file, with `---` lines before and after the frontmatter
+- ALWAYS add YAML frontmatter with a `description` field at the top of the file, with `---` lines before and after the frontmatter
 - ALWAYS use valid markdown syntax, with the exception of the YAML frontmatter at the top of the `.prompt.md` file
 - ALWAYS demonstrate the `bash` usage of the 'Primary use of <command>' section with a code block that starts with three backticks followed by `bash` (i.e. "```bash")
 - ALWAYS leave an empty line before and after each code block, as well as at the end of the file

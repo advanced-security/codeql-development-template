@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql test accept command
 ---
 
 # Command Resource for `codeql test accept`

@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Reference for the qlt query generate new-query command
 ---
 
 # Command Resource for `qlt query generate new-query`

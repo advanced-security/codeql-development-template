@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql database analyze command
 ---
 
 # Command Resource for `codeql database analyze`

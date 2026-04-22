@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql resolve metadata command
 ---
 
 # Command Resource for `codeql resolve metadata`

@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql resolve tests command
 ---
 
 # Command Resource for `codeql resolve tests`

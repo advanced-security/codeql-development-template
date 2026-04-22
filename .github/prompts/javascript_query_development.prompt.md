@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Guidance for developing CodeQL queries targeting JavaScript and TypeScript code
 ---
 
 # JavaScript Query Development

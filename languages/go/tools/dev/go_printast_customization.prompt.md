@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Guide for customizing the PrintAST query for Go
 ---
 
 # Go PrintAST Customization

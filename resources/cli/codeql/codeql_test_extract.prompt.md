@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql test extract command
 ---
 
 # Command Resource for `codeql test extract`

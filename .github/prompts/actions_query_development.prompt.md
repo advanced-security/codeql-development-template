@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Guidance for developing CodeQL queries targeting GitHub Actions workflows
 ---
 
 # Actions Query Development

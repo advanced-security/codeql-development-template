@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Guide for implementing JavaScript security queries in CodeQL
 ---
 
 # CodeQL JavaScript Security Query Implementation Guide

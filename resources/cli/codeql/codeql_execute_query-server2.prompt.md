@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Reference for the codeql execute query-server2 command
 ---
 
 # Command Resource for `codeql execute query-server2`

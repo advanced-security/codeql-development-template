@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Guide for implementing C++ security queries in CodeQL with data flow analysis
 ---
 
 # CodeQL C++ Security Query Implementation Guide

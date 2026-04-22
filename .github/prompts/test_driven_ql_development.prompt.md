@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Test-driven development workflow for writing and testing CodeQL queries
 ---
 
 # Test-Driven Development (TDD) of `ql` Code

@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql query compile command
 ---
 
 # Command Resource for `codeql query compile`

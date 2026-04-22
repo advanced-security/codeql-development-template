@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Summary and links to CLI tool resource prompts used in CodeQL development
 ---
 
 # CLI Resources Reference

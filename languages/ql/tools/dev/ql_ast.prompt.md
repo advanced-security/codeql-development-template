@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  CodeQL AST node reference for the QL language
 ---
 
 # CodeQL AST nodes for `ql` language

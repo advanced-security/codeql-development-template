@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the qlt test run execute-unit-tests command
 ---
 
 # QLT Test Run Execute-Unit-Tests Command

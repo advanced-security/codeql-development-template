@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql resolve library-path command
 ---
 
 # Command Resource for `codeql resolve library-path`

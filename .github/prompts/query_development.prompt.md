@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Common guidance for developing CodeQL queries across all supported languages
 ---
 
 # CodeQL Query Development

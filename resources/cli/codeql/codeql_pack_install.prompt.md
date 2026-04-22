@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql pack install command
 ---
 
 # Command Resource for `codeql pack install`

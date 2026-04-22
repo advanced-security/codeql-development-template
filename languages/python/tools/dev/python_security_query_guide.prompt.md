@@ -1,5 +1,6 @@
 ---
-mode: agent
+description: >-
+  Guide for implementing Python framework models and security queries in CodeQL
 ---
 
 # CodeQL Python Framework and Query Implementation Guide

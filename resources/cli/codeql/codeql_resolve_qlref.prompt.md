@@ -1,5 +1,6 @@
 ---
-mode: 'agent'
+description: >-
+  Reference for the codeql resolve qlref command
 ---
 
 # Command Resource for `codeql resolve qlref`

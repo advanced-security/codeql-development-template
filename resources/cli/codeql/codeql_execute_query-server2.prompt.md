@@ -163,4 +163,3 @@ Run `codeql execute query-server2 --help --verbose` for much more information.
 
 - [`codeql query run`](./codeql_query_run.prompt.md) - Execute single CodeQL queries (alternative for simple use cases)
 - [`codeql query compile`](./codeql_query_compile.prompt.md) - Compile queries before execution
-

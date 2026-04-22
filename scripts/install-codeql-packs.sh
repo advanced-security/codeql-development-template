@@ -23,6 +23,11 @@ EOF
 while [[ $# -gt 0 ]]; do
 	case $1 in
 		--language)
+			if [[ $# -lt 2 || "$2" == -* ]]; then
+				echo "Error: --language requires a value" >&2
+				usage >&2
+				exit 1
+			fi
 			LANGUAGE="$2"
 			shift 2
 			;;
@@ -99,7 +104,14 @@ run_with_retry() {
 
 ## Discover packs using codeql pack ls
 echo "INFO: Discovering CodeQL packs in workspace..."
-PACK_JSON=$(codeql pack ls --format=json 2>/dev/null)
+PACK_LS_STDERR=$(mktemp)
+if ! PACK_JSON=$(codeql pack ls --format=json 2>"${PACK_LS_STDERR}"); then
+	echo "Error: Failed to discover CodeQL packs in workspace" >&2
+	cat "${PACK_LS_STDERR}" >&2
+	rm -f "${PACK_LS_STDERR}"
+	exit 1
+fi
+rm -f "${PACK_LS_STDERR}"
 
 # codeql pack ls --format=json returns:
 # { "packs": { "<path>/qlpack.yml": { "name": "...", "version": "..." }, ... } }

@@ -10,6 +10,3 @@ models-output.json
 *.testproj
 trap
 
-# CodeQL pack lock files are generated locally based on the installed CodeQL CLI version
-codeql-pack.lock.yml
-

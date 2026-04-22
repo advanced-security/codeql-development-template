@@ -1,5 +1,5 @@
 name: languages-java-custom-test
-version: 0.0.1
+version: 0.0.2
 dependencies:
-  languages-java-custom-src: "*"
+  languages-java-custom-src: ${workspace}
 extractor: java

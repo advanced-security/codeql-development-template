@@ -1,5 +1,5 @@
 name: languages-go-custom-test
-version: 0.0.1
+version: 0.0.2
 dependencies:
-  languages-go-custom-src: "*"
+  languages-go-custom-src: ${workspace}
 extractor: go

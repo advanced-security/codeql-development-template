@@ -1,5 +1,5 @@
 name: languages-csharp-tools-src
-version: 0.0.1
+version: 0.0.2
 library: false
 dependencies:
   codeql/csharp-all: "*"

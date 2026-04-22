@@ -31,3 +31,7 @@ jobs:
 
       - name: Copilot Setup - Setup CodeQL environment
         uses: ./.github/actions/setup-codeql-environment
+
+      - name: Copilot Setup - Install CodeQL workspace packs
+        shell: bash
+        run: ./scripts/install-codeql-packs.sh

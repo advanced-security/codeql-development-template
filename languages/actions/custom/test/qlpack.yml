@@ -1,5 +1,5 @@
 name: languages-actions-custom-test
-version: 0.0.1
+version: 0.0.2
 dependencies:
-  languages-actions-custom-src: "*"
+  languages-actions-custom-src: ${workspace}
 extractor: actions

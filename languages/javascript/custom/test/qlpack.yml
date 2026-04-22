@@ -1,5 +1,5 @@
 name: languages-javascript-custom-test
-version: 0.0.1
+version: 0.0.2
 dependencies:
-  languages-javascript-custom-src: '*'
+  languages-javascript-custom-src: ${workspace}
 extractor: javascript

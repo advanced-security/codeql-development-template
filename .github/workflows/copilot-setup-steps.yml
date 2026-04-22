@@ -11,6 +11,7 @@ on:
       - .github/workflows/copilot-setup-steps.yml
       - .github/actions/setup-codeql-environment/action.yml
       - qlt.conf.json
+      - scripts/install-codeql-packs.sh
   pull_request:
     branches:
       - main
@@ -18,6 +19,7 @@ on:
       - .github/workflows/copilot-setup-steps.yml
       - .github/actions/setup-codeql-environment/action.yml
       - qlt.conf.json
+      - scripts/install-codeql-packs.sh
 
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
@@ -31,3 +33,7 @@ jobs:
 
       - name: Copilot Setup - Setup CodeQL environment
         uses: ./.github/actions/setup-codeql-environment
+
+      - name: Copilot Setup - Install CodeQL workspace packs
+        shell: bash
+        run: ./scripts/install-codeql-packs.sh

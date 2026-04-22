@@ -34,7 +34,19 @@ Before using this repository template, ensure your GitHub organization/account h
 
 **Note:** The ['copilot-setup-steps' actions workflow](./.github/workflows/copilot-setup-steps.yml) will automatically set up the environment for Copilot Coding Agent (CCA), so local installation is optional and primarily useful for manual development.
 
-### Step 2: Create an Issue for the CodeQL query you want to develop
+### Step 2: Install CodeQL Pack Dependencies
+
+After cloning your new repository, install the CodeQL pack dependencies:
+
+```bash
+./scripts/install-codeql-packs.sh
+```
+
+This uses `codeql pack ls` to discover all packs in the workspace and runs `codeql pack install` for each one, generating `codeql-pack.lock.yml` files and downloading required dependencies locally. You can target a single language with `--language <lang>` (e.g., `--language java`).
+
+> **Note:** The generated `codeql-pack.lock.yml` files should be committed to your repository to ensure reproducible dependency resolution across your team.
+
+### Step 3: Create an Issue for the CodeQL query you want to develop
 
 1. **Navigate to Issues** in your new repository
 2. **Click "New Issue"**
@@ -46,13 +58,13 @@ Before using this repository template, ensure your GitHub organization/account h
    - Specify severity level
 5. **Submit the issue**
 
-### Step 3: Assign Issue to `@copilot`
+### Step 4: Assign Issue to `@copilot`
 
 1. **Assign the issue** to `@copilot` (GitHub's Copilot Coding Agent user)
 2. **Wait for Copilot** to process the issue and create a Pull Request
 3. **Monitor progress** via the `Sessions` and/or comments for the new Pull Request
 
-### Step 4: Review Pull Request created by Copilot Coding Agent
+### Step 5: Review Pull Request created by Copilot Coding Agent
 
 1. **Navigate to the generated Pull Request**
 2. **Review the changes:**

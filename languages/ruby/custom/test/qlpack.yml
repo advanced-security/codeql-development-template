@@ -1,5 +1,5 @@
 name: languages-ruby-custom-test
-version: 0.0.1
+version: 0.0.2
 dependencies:
-  languages-ruby-custom-src: '*'
+  languages-ruby-custom-src: ${workspace}
 extractor: ruby

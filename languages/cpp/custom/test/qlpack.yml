@@ -1,5 +1,5 @@
 name: languages-cpp-custom-test
-version: 0.0.1
+version: 0.0.2
 dependencies:
-  languages-cpp-custom-src: '*'
+  languages-cpp-custom-src: ${workspace}
 extractor: cpp

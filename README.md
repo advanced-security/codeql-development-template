@@ -82,12 +82,12 @@ This uses `codeql pack ls` to discover all packs in the workspace and runs `code
 
 ## 📋 Available Issue Templates
 
-| Template                                                                 | Purpose                                                                        |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| [Request new CodeQL Query](.github/ISSUE_TEMPLATE/query-create.yml)      | Create a new CodeQL query to detect specific code patterns or vulnerabilities  |
-| [Update existing CodeQL Query](.github/ISSUE_TEMPLATE/query-update.yml)  | Modify an existing query to improve accuracy or add new detection capabilities |
+| Template                                                                              | Purpose                                                                                  |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [Request new CodeQL Query](.github/ISSUE_TEMPLATE/query-create.yml)                   | Create a new CodeQL query to detect specific code patterns or vulnerabilities            |
+| [Update existing CodeQL Query](.github/ISSUE_TEMPLATE/query-update.yml)               | Modify an existing query to improve accuracy or add new detection capabilities           |
 | [Request new CodeQL Data Extension](.github/ISSUE_TEMPLATE/data-extension-create.yml) | Create a data extension (models-as-data YAML) to model an unmodeled library or framework |
-| [Improve Prompts/Instructions](.github/ISSUE_TEMPLATE/prompt-update.yml) | Contribute improvements to the AI guidance system                              |
+| [Improve Prompts/Instructions](.github/ISSUE_TEMPLATE/prompt-update.yml)              | Contribute improvements to the AI guidance system                                        |
 
 ## Repository Structure
 

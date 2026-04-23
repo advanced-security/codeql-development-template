@@ -101,7 +101,7 @@ runs:
     - name: Cache QLT and CodeQL packages
       id: cache-codeql
       if: inputs.install-codeql == 'true'
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: |
           ~/.qlt/packages
@@ -112,7 +112,7 @@ runs:
 
     - name: Install QLT (CodeQL Development Toolkit)
       id: install-qlt
-      uses: advanced-security/codeql-development-toolkit/.github/actions/install-qlt@da8bc39fd7dc759c8a528b7c2e7534675c06c62c # main
+      uses: advanced-security/codeql-development-toolkit/.github/actions/install-qlt@177984f7fc369b131c844b3a50d8d1e9a8e5223b # v0.0.26
       with:
         qlt-version: "latest"
         add-to-path: true
@@ -435,7 +435,7 @@ runs:
     - name: Cache language runtimes
       id: cache-runtimes
       if: inputs.install-language-runtimes == 'true'
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: |
           ~/go/pkg/mod
@@ -493,7 +493,7 @@ runs:
     - name: Cache .NET packages
       if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'csharp')
       id: cache-dotnet-packages
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: |
           ~/.nuget/packages
@@ -527,7 +527,7 @@ runs:
     - name: Cache C++ build tools
       if: inputs.install-language-runtimes == 'true' && contains(inputs.languages, 'cpp')
       id: cache-cpp-tools
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: |
           ~/.ccache

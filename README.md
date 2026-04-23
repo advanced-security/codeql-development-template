@@ -46,16 +46,18 @@ This uses `codeql pack ls` to discover all packs in the workspace and runs `code
 
 > **Note:** The generated `codeql-pack.lock.yml` files should be committed to your repository to ensure reproducible dependency resolution across your team.
 
-### Step 3: Create an Issue for the CodeQL query you want to develop
+### Step 3: Create an Issue for the CodeQL query or data extension you want to develop
 
 1. **Navigate to Issues** in your new repository
 2. **Click "New Issue"**
-3. **Select "Request new CodeQL Query"** template
-4. **Fill in the details:**
-   - Choose target language (e.g., Java, Python, JavaScript)
-   - Describe what the query should detect
-   - Provide code examples (optional but recommended)
-   - Specify severity level
+3. **Select a template:**
+   - **"Request new CodeQL Query"** for custom query development
+   - **"Request new CodeQL Data Extension"** for modeling an unmodeled library via YAML (models-as-data)
+4. **Fill in the template fields** — each template will guide you, but at minimum:
+   - **Target language**
+   - **Description** of what to detect or which library to model
+   - **Library URL** (data extensions) or **Severity level** (queries)
+   - **Code Examples** (recommended — helps Copilot generate better results)
 5. **Submit the issue**
 
 ### Step 4: Assign Issue to `@copilot`
@@ -68,7 +70,7 @@ This uses `codeql pack ls` to discover all packs in the workspace and runs `code
 
 1. **Navigate to the generated Pull Request**
 2. **Review the changes:**
-   - Query implementation (`.ql` files)
+   - Query implementation (`.ql` files) or data extensions (`.model.yml` files)
    - Test cases (in `test/` directories)
    - Query documentation (`.md` and `.qhelp` files)
 3. **Check CI/CD results:**
@@ -84,6 +86,7 @@ This uses `codeql pack ls` to discover all packs in the workspace and runs `code
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
 | [Request new CodeQL Query](.github/ISSUE_TEMPLATE/query-create.yml)      | Create a new CodeQL query to detect specific code patterns or vulnerabilities  |
 | [Update existing CodeQL Query](.github/ISSUE_TEMPLATE/query-update.yml)  | Modify an existing query to improve accuracy or add new detection capabilities |
+| [Request new CodeQL Data Extension](.github/ISSUE_TEMPLATE/data-extension-create.yml) | Create a data extension (models-as-data YAML) to model an unmodeled library or framework |
 | [Improve Prompts/Instructions](.github/ISSUE_TEMPLATE/prompt-update.yml) | Contribute improvements to the AI guidance system                              |
 
 ## Repository Structure
@@ -117,7 +120,7 @@ codeql-development-template/
 
 This template implements a **hierarchical prompt system** that maximizes GitHub Copilot's effectiveness:
 
-1. **Issue Templates** provide structured input for query requirements
+1. **Issue Templates** provide structured input for query and model requirements
 2. **Language-Specific Instructions** guide Copilot with relevant context
 3. **High-Level Prompts** break down complex CodeQL workflows
 4. **Tool-Specific Resources** provide CLI usage examples and patterns
@@ -135,18 +138,20 @@ See [PROMPTS.md](PROMPTS.md) for details on the prompt hierarchy system.
 
 ## Supported Languages
 
-The template supports CodeQL query development for:
+CodeQL supports the following languages. This template provides query development and/or data extension (models-as-data) guidance for each:
 
-| Language              | CodeQL Library |
-| --------------------- | -------------- |
-| GitHub Actions        | `actions`      |
-| C/C++                 | `cpp`          |
-| C#                    | `csharp`       |
-| Go                    | `go`           |
-| Java                  | `java`         |
-| JavaScript/TypeScript | `javascript`   |
-| Python                | `python`       |
-| Ruby                  | `ruby`         |
+| Language              | CodeQL Library | Query Development | Model Development |
+| --------------------- | -------------- | :---------------: | :---------------: |
+| C/C++                 | `cpp`          |        ✅         |        ✅         |
+| C#                    | `csharp`       |        ✅         |        ✅         |
+| GitHub Actions        | `actions`      |        ✅         |                   |
+| Go                    | `go`           |        ✅         |        ✅         |
+| Java/Kotlin           | `java`         |        ✅         |        ✅         |
+| JavaScript/TypeScript | `javascript`   |        ✅         |        ✅         |
+| Python                | `python`       |        ✅         |        ✅         |
+| Ruby                  | `ruby`         |        ✅         |        ✅         |
+| Rust                  | `rust`         |                   |                   |
+| Swift                 | `swift`        |                   |                   |
 
 ## License
 

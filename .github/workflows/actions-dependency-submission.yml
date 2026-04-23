@@ -1,0 +1,25 @@
+name: Actions Dependency Submission
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "**/*.yml"
+      - "**/*.yaml"
+      - ".github/workflows/actions-dependency-submission.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write # Required for dependency submission
+
+jobs:
+  submit-dependencies:
+    name: Submit Actions Dependencies to Dependency Graph
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Actions Dependency Submission - Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Actions Dependency Submission - Submit dependencies
+        uses: jessehouwing/actions-dependency-submission@cc1053477c0067761c9747ac9ad325b70159ab09 # v1

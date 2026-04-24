@@ -1,0 +1,12 @@
+# Enforce LF line endings for text files on all platforms.
+# Prettier config sets `endOfLine: lf`, so checkout must match.
+* text=auto eol=lf
+
+# Binary files - do not touch
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.pdf binary

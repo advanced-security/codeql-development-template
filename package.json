@@ -25,12 +25,12 @@
     "yaml-eslint-parser": "^2.0.0"
   },
   "scripts": {
-    "format": "prettier --write '**/*.{yml,yaml,md}'",
-    "format:check": "prettier --check '**/*.{yml,yaml,md}'",
+    "format": "prettier --write \"**/*.{yml,yaml,md}\"",
+    "format:check": "prettier --check \"**/*.{yml,yaml,md}\"",
     "lint": "npm run lint:markdown && npm run lint:yaml",
     "lint:fix": "npm run lint:markdown:fix && npm run lint:yaml:fix",
-    "lint:markdown": "eslint '**/README.md'",
-    "lint:markdown:fix": "eslint '**/README.md' --fix",
+    "lint:markdown": "eslint \"**/README.md\"",
+    "lint:markdown:fix": "eslint \"**/README.md\" --fix",
     "lint:yaml": "eslint --ext .yml,.yaml .github/workflows/ .github/ISSUE_TEMPLATE/",
     "lint:yaml:fix": "eslint --ext .yml,.yaml .github/workflows/ .github/ISSUE_TEMPLATE/ --fix",
     "test:lint": "npm run lint:yaml && npm run lint:markdown && npm run format:check",

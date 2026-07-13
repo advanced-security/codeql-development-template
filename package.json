@@ -20,7 +20,7 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.5.0",
     "eslint-plugin-markdown": "^5.1.0",
-    "eslint-plugin-yml": "^3.4.0",
+    "eslint-plugin-yml": "^3.6.0",
     "prettier": "^3.8.4",
     "yaml-eslint-parser": "^2.0.0"
   },

@@ -172,6 +172,8 @@ models/
 
 Naming convention: `<library>-<module>.model.yml` (lowercase, hyphen-separated).
 
+Keep data extension model entries in alphabetical order.
+
 All `.model.yml` files within a model pack are automatically picked up via the `dataExtensions` glob in `qlpack.yml` (e.g., `dataExtensions: models/**/*.yml`).
 
 ### Common Workflows
